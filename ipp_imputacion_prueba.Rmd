@@ -43,15 +43,21 @@ ponderaciones <- read_excel("catalogoIPP_test.xlsx", sheet = "Sheet1") %>%
 ```
 
 ```{r}
-mes <- 1
+mes <- 2
+```
 
+```{r}
 variables <- inputdata(mes)
 
 mes <- variables$mes
 mesant <- variables$mes_ant
+months <- variables$months
+rows <- variables$rows
 
 mes
 mesant
+months
+rows
 ```
 
 ```{r}
@@ -68,13 +74,12 @@ precios <- read_excel("precios_test.xlsx", sheet = "Sheet1") %>%
          PRODUCTO = gsub("\\.", "", PRODUCTO),
          VARIEDAD = gsub("\\.", "", VARIEDAD))
 
-#se tiene una boleta con los precios que no son cero en el mes actual
 bol <- precios %>% 
   select(PRODUCTO, VARIEDAD, all_of(mes), all_of(mesant)) %>% 
-  #mutate(!!mesant := if_else(!!sym(mesant) == 0, !!sym(mes), !!sym(mesant))) %>% 
-  #filter(!!sym(mesant) != 0) %>% 
-  filter(!!sym(mes) != 0) #tuve que quitar las filas que tienen valor 0 en el mes anterior y en el mes actual (por el momento)
+  filter(!!sym(mes) != 0) #se quitan los datos que en el mes actual son cero para imputarlos
 ```
+
+## Proceso imputacion nuevo
 
 ```{r}
 #se toman los precios que son cero en el mes actual y se revisan si pueden o no imputarse
@@ -96,17 +101,26 @@ nopuede_imp
 ```
 
 ```{r}
-#estos serian los que no son cero sobre los que se va a calcular el relativo y todo eso para el proceos de imputacion, y si estamos usando los precios del mes actual funciona hacerlo asi como esta aca.
-precios_imp <- precios %>% 
-  select(PRODUCTO, VARIEDAD, all_of(mes), all_of(mesant)) %>% 
-  filter(!!sym(mes) != 0 & !!sym(mesant) != 0) %>% 
-  filter(PRODUCTO %in% can_imput) %>% 
-  mutate(rel_var = !!sym(mes) / !!sym(mesant)) %>% 
-  group_by(PRODUCTO) %>% 
-  summarize(rel_prod = geometric.mean(rel_var),
-            media = mean(!!sym(mes))) %>% 
-  mutate(p_imp = rel_prod*media)
-precios_imp
+factor_imput <- bol %>% mutate(variacion = !!sym(mes) / !!sym(mesant)) %>% 
+  mutate(variacion = if_else(is.infinite(variacion), 1, variacion)) %>% 
+  group_by(VARIEDAD) %>% 
+  summarize(factorimput = geometric.mean(variacion))
+factor_imput
+```
+
+```{r}
+precios_imput <- sipuede_imp %>% left_join(factor_imput, join_by(VARIEDAD)) %>% 
+  mutate(factorimput = if_else(is.na(factorimput), 1, factorimput)) %>% 
+  mutate(!!sym(mes) := !!sym(mesant)*factorimput) %>% 
+  select(PRODUCTO, VARIEDAD, !!sym(mes), !!sym(mesant))
+precios_imput
+```
+
+```{r}
+bol %>% rbind(precios_imput) %>% 
+  rbind(nopuede_imp) %>% 
+  mutate(relativo = !!sym(mes) / !!sym(mesant)) %>% 
+  filter(relativo > 2)
 ```
 
 ```{r}

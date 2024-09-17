@@ -27,8 +27,10 @@ library('ggplot2')
 source("func_test.R")
 ```
 
+## 1. Calculo del IPP
+
 ```{r}
-mes <- 7
+mes <- 1
 ```
 
 ```{r}
@@ -77,16 +79,24 @@ bol <- precios %>%
   filter(!!sym(mes) != 0) #se quitan los datos que en el mes actual son cero para imputarlos
 ```
 
+### 1.1 Imputación de precios
+
 ```{r}
 #se hace la imputacion de datos
 boleta <- imputacion()
 ```
 
+### 1.2 Calculo del indice
+
 ```{r}
 relativo_var <- boleta %>% 
   mutate(rel_var = !!sym(mes) / !!sym(mesant)) %>% 
-  mutate(rel_var = if_else(is.infinite(rel_var) | is.nan(rel_var) | is.na(rel_var) | rel_var > 2 | rel_var == 0, 1, rel_var)) %>%
+  mutate(rel_var = if_else(is.infinite(rel_var) | is.nan(rel_var) | is.na(rel_var), 1, rel_var)) %>%
   drop_na(PRODUCTO)
+```
+
+```{r}
+relativo_var %>% filter(rel_var > 2 | rel_var == 0)
 ```
 
 ```{r}
@@ -110,6 +120,8 @@ calc_indx(SECCION) #este seria el indice general
 ind <- calc_indx(SECCION) %>% select(SECCION, indice)
 ```
 
+### 1.3 Determinacion de precios faltantes
+
 ```{r}
 missing <- missing_prices()
 
@@ -120,6 +132,8 @@ no_imputables <- missing$cant_imput
 ```{r}
 export_index() #Se exportan los resultados a un archivo de excel
 ```
+
+### 1.4 Grafico de indice general
 
 Se recolectan los indices generales para poder verlos en un grafico
 
@@ -138,6 +152,33 @@ resipp
 grafica(resipp, 'Mes', 'indice')
 ```
 
+### 1.5 Calculo de Incidencias
+
+```{r}
+indgen_ant <- as.data.frame(readind(mesant, mesant))
+
+incid <- incidencias(ind_prod01)
+```
+
+```{r}
+incid %>% filter(incid < 0)
+```
+
+```{r}
+incid %>% filter(incid > 0)
+```
+
+```{r}
+incid %>% select(incid) %>% 
+  summarize(total = sum(incid))
+```
+
+```{r}
+ind$indice/indgen_ant$indice*100-100
+```
+
+## 2. Revision de productos faltantes
+
 Se obtienen los articulos de los que no se obtuvo informacion cada mes
 
 ```{r}
@@ -149,12 +190,12 @@ count_noimputables <- resultados$noimputados
 
 ```{r}
 #con esto se revisan las variedades que no han presentado precios en tres o mas meses 
-test <- count_imputables %>% filter(total >= 3)
+count_imputables %>% filter(total >= 3)
 #test
 ```
 
 ```{r}
-test1 <- count_noimputables %>% filter(total >= 3)
+count_noimputables %>% filter(total >= 3)
 #test1
 ```
 
@@ -179,4 +220,17 @@ writeData(wb, "no_imputables", count_noimputables)
  
 file_name <- paste0("resumen_preciosfaltantes.xlsx")
 saveWorkbook(wb, file_name, overwrite = TRUE)
+```
+
+Revisamos los productos que no aparecen
+
+```{r}
+ponderaciones %>% filter(CCP...1 == 'PRODUCTO') %>% anti_join(ind_prod01) %>% 
+  select(CCP...1, PRODUCTO, DESCRIPCION, ponderacion) #%>% 
+  #summarize(total = sum(ponderacion))
+```
+
+```{r}
+ponderaciones %>% filter(CCP...1 == 'PRODUCTO') %>% 
+  summarize(total = sum(ponderacion))
 ```
