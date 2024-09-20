@@ -55,6 +55,7 @@ ponderaciones <- read_excel("catalogoIPP_test.xlsx", sheet = "Sheet2") %>%
     ACTIVIDAD = substr(PRODUCTO, 1, 6),
     CLASE = substr(PRODUCTO, 1, 5),
     GRUPO = substr(PRODUCTO, 1, 4),
+    
     GRUPO = substr(PRODUCTO, 1, 4),
     DIVISION = substr(PRODUCTO, 1, 3),
     SECCION = substr(PRODUCTO, 1, 1))
@@ -195,6 +196,16 @@ count_imputables %>% filter(total >= 3)
 ```
 
 ```{r}
+pond_variedad <- ponderaciones %>% filter(CCP...1 == 'VARIEDAD') %>% 
+  select(PRODUCTO, DESCRIPCION) %>% 
+  rename('VARIEDAD' = PRODUCTO)
+count_imputables1 <- count_imputables %>% left_join(pond_variedad) %>% 
+  select(VARIEDAD, DESCRIPCION, everything())
+count_noimputables1 <- count_noimputables %>% left_join(pond_variedad) %>% 
+  select(VARIEDAD, DESCRIPCION, everything())
+```
+
+```{r}
 count_noimputables %>% filter(total >= 3)
 #test1
 ```
@@ -213,10 +224,10 @@ count_noimputables %>% filter(total >= 3)
 wb <- createWorkbook()
  
 addWorksheet(wb, "imputables")
-writeData(wb, "imputables", count_imputables)
+writeData(wb, "imputables", count_imputables1)
 
 addWorksheet(wb, "no_imputables")
-writeData(wb, "no_imputables", count_noimputables)
+writeData(wb, "no_imputables", count_noimputables1)
  
 file_name <- paste0("resumen_preciosfaltantes.xlsx")
 saveWorkbook(wb, file_name, overwrite = TRUE)
