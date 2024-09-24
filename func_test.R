@@ -35,12 +35,21 @@ inputdata <- function(month_number) {
 #funcion para calcular los indices de los grupos superiores
 calc_indx <- function(col_name){
   col_sym <- ensym(col_name)
+  
+  value_str <- as_string(col_sym)
+  
+  descripcion <- ponderaciones %>% filter(CCP...1 == !!value_str) %>% 
+    select(PRODUCTO, DESCRIPCION) %>% 
+    rename(!!value_str := PRODUCTO)
+  
   ind_prod %>% left_join(ponderaciones %>% select(PRODUCTO, !!col_sym, ponderacion), by = join_by(PRODUCTO)) %>% 
     group_by(!!col_sym) %>% 
     summarize(sum1 = sum(indice*ponderacion),
               sum2 = sum(ponderacion)) %>% 
-    mutate(indice = sum1/sum2)
-  #agregar aqui la parte que pone los nombres
+    mutate(indice = sum1/sum2) %>% 
+    left_join(descripcion, by = join_by(!!col_sym)) %>% 
+    select(!!col_sym, DESCRIPCION, everything()) %>% 
+    rename('ponderacion' = sum2)
 }
 
 

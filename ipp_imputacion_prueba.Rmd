@@ -43,7 +43,7 @@ ponderaciones <- read_excel("catalogoIPP_test.xlsx", sheet = "Sheet1") %>%
 ```
 
 ```{r}
-mes <- 2
+mes <- 1
 ```
 
 ```{r}

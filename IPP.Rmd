@@ -109,7 +109,12 @@ ind_var <- relativo_var %>% group_by(PRODUCTO) %>%
 ind_prod <- ind_var %>% left_join(indant %>% select(PRODUCTO, indice), by = join_by(PRODUCTO)) %>% 
   rename(indant = indice) %>% 
   mutate(indice = indant*rel_prod) 
-ind_prod01 <- ind_prod %>% select(PRODUCTO, indice)
+
+descrip <- ponderaciones %>% filter(CCP...1 == 'PRODUCTO') %>% 
+    select(PRODUCTO, DESCRIPCION, ponderacion)
+
+ind_prod01 <- ind_prod %>% select(PRODUCTO, indice) %>% left_join(descrip, by = join_by(PRODUCTO)) %>% 
+    select(PRODUCTO, DESCRIPCION, everything())
 ```
 
 ```{r}
@@ -118,7 +123,7 @@ ind_clase <- calc_indx(CLASE)
 ind_grupo <- calc_indx(GRUPO)
 ind_div <- calc_indx(DIVISION)
 calc_indx(SECCION) #este seria el indice general
-ind <- calc_indx(SECCION) %>% select(SECCION, indice)
+ind <- calc_indx(SECCION)
 ```
 
 ### 1.3 Determinacion de precios faltantes
@@ -176,6 +181,38 @@ incid %>% select(incid) %>%
 
 ```{r}
 ind$indice/indgen_ant$indice*100-100
+```
+
+### 1.6 Outliers
+
+```{r}
+summary(relativo_var$rel_var)
+```
+
+```{r}
+hist(relativo_var$rel_var,
+  xlab = "relativo",
+  main = "Histograma de relativo",
+  breaks = sqrt(length(relativo_var$rel_var)) # set number of bins
+)
+
+boxplot(relativo_var$rel_var,
+  ylab = "relativo"
+)
+```
+
+```{r}
+lim_inf <- quantile(relativo_var$rel_var, 0.01)
+lim_sup <- quantile(relativo_var$rel_var, 0.99)
+
+lim_inf
+lim_sup
+```
+
+```{r}
+outlier_ind <- which(relativo_var$rel_var < lim_inf | relativo_var$rel_var > lim_sup)
+
+relativo_var[outlier_ind, ]
 ```
 
 ## 2. Revision de productos faltantes
