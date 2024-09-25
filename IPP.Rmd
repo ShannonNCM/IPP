@@ -220,8 +220,8 @@ boxplot(relativo_var$rel_var,
 
 ```{r}
 #ya que los cuartiles 1 y 3 tienen el mismo valor, no se puede realizar correctamente un analisis de quartiles, por lo que se opto por realizar un analisis con los percentiles, para este caso de tomaron limites del 1% y 99%
-lim_inf <- quantile(relativo_var$rel_var, 0.01)
-lim_sup <- quantile(relativo_var$rel_var, 0.99)
+lim_inf <- quantile(relativo_var$rel_var, 0.025)
+lim_sup <- quantile(relativo_var$rel_var, 0.975)
 
 lim_inf
 lim_sup
