@@ -33,7 +33,7 @@ source("funciones.R")
 ## 1. Calculo del IPP
 
 ```{r}
-#ingresa el numero del mes que se va a calcular
+#ingresa el numero del mes que se va a calcular (por el momento no toma en cuenta el año ya que se esta empezando en 2024)
 mes <- 1
 ```
 
