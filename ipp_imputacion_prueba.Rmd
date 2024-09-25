@@ -139,10 +139,10 @@ precios_imp01
 
 ```{r}
 #se obtiene el dataframe con los precios imputados
-imputados <- sipuede_imp %>% left_join(precios_imp, by = 'PRODUCTO') %>% 
-  mutate(!!sym(mes) := p_imp) %>% 
-  select(PRODUCTO, VARIEDAD, !!sym(mes), !!sym(mesant))
-imputados
+# imputados <- sipuede_imp %>% left_join(precios_imp, by = 'PRODUCTO') %>% 
+#   mutate(!!sym(mes) := p_imp) %>% 
+#   select(PRODUCTO, VARIEDAD, !!sym(mes), !!sym(mesant))
+# imputados
 ```
 
 ```{r}
@@ -153,9 +153,9 @@ imputados01
 ```
 
 ```{r}
-#se regresan los precios imputados y los que no se pudieron imputar a la boleta
-boleta <- bol %>% rbind(imputados) %>% 
-  rbind(nopuede_imp)
+# #se regresan los precios imputados y los que no se pudieron imputar a la boleta
+# boleta <- bol %>% rbind(imputados) %>% 
+#   rbind(nopuede_imp)
 ```
 
 ```{r}
@@ -352,4 +352,8 @@ imputacion()
 # inputdata(mes)
 ```
 
-#### 
+#### Outliers (tests)
+
+```{r}
+
+```

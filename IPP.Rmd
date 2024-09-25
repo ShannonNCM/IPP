@@ -5,6 +5,8 @@ title: "R Notebook"
 output: html_notebook
 ---
 
+R Notebook creado para realizar el calculo del IPP para el año 2024
+
 ```{r}
 library("readxl")
 library("tidyverse")
@@ -24,12 +26,14 @@ library('stringi')
 library('rlang')
 library('ggplot2')
 
-source("func_test.R")
+#source("func_test.R") #este archivo tiene el borrador de las funciones que se utilizan en el script
+source("funciones.R")
 ```
 
 ## 1. Calculo del IPP
 
 ```{r}
+#ingresa el numero del mes que se va a calcular
 mes <- 1
 ```
 
@@ -48,6 +52,7 @@ rows
 ```
 
 ```{r}
+#se importan las ponderaciones y se modifican los strings de los codigos para su uso dentro del script
 ponderaciones <- read_excel("catalogoIPP_test.xlsx", sheet = "Sheet2") %>% 
   mutate(VARIEDAD = gsub("\\.", "", VARIEDAD)) %>% 
   rename(PRODUCTO = VARIEDAD, ponderacion = `Ponderacion 5 Digitos`) %>% 
@@ -55,15 +60,13 @@ ponderaciones <- read_excel("catalogoIPP_test.xlsx", sheet = "Sheet2") %>%
     ACTIVIDAD = substr(PRODUCTO, 1, 6),
     CLASE = substr(PRODUCTO, 1, 5),
     GRUPO = substr(PRODUCTO, 1, 4),
-    
-    GRUPO = substr(PRODUCTO, 1, 4),
     DIVISION = substr(PRODUCTO, 1, 3),
     SECCION = substr(PRODUCTO, 1, 1))
 ```
 
 ```{r}
-#se importan los indices anteriores
-file_name <- paste0("ind_", mesant, ".xlsx")
+#se importan los indices del mes anterior
+file_name <- paste0("indices/ind_", mesant, ".xlsx")
 indant <- read_excel(file_name, sheet = "Sheet1") %>% 
   mutate(PRODUCTO = gsub("\\.", "", PRODUCTO))
 ```
@@ -83,13 +86,14 @@ bol <- precios %>%
 ### 1.1 Imputación de precios
 
 ```{r}
-#se hace la imputacion de datos
+#se hace la imputacion de datos, y se obtiene un dataframe con todos los precios incluyendo los imputados
 boleta <- imputacion()
 ```
 
 ### 1.2 Calculo del indice
 
 ```{r}
+#se calcula el relativo de las variedades
 relativo_var <- boleta %>% 
   mutate(rel_var = !!sym(mes) / !!sym(mesant)) %>% 
   mutate(rel_var = if_else(is.infinite(rel_var) | is.nan(rel_var) | is.na(rel_var), 1, rel_var)) %>%
@@ -97,19 +101,23 @@ relativo_var <- boleta %>%
 ```
 
 ```{r}
+#se revisan los valores de los relativos calculados
 relativo_var %>% filter(rel_var > 2 | rel_var == 0)
 ```
 
 ```{r}
+#se calcula la media geométrica de los relativos de las variedades
 ind_var <- relativo_var %>% group_by(PRODUCTO) %>% 
   summarize(rel_prod = geometric.mean(rel_var))
 ```
 
 ```{r}
+#se realiza el calculo del indice de los productos
 ind_prod <- ind_var %>% left_join(indant %>% select(PRODUCTO, indice), by = join_by(PRODUCTO)) %>% 
   rename(indant = indice) %>% 
   mutate(indice = indant*rel_prod) 
 
+#se crea un dataframe con las descripciones de los productos para añadirlas al resultado de los indices de los productos
 descrip <- ponderaciones %>% filter(CCP...1 == 'PRODUCTO') %>% 
     select(PRODUCTO, DESCRIPCION, ponderacion)
 
@@ -118,6 +126,7 @@ ind_prod01 <- ind_prod %>% select(PRODUCTO, indice) %>% left_join(descrip, by = 
 ```
 
 ```{r}
+#se calculan los indices de los niveles superiores utilizando la funcion "calc_indx"
 ind_act <- calc_indx(ACTIVIDAD)
 ind_clase <- calc_indx(CLASE)
 ind_grupo <- calc_indx(GRUPO)
@@ -129,6 +138,7 @@ ind <- calc_indx(SECCION)
 ### 1.3 Determinacion de precios faltantes
 
 ```{r}
+#se buscan los precios faltantes en la boleta, separandolos en los que pueden ser imputados y los que no, de acuerdo al criterio previamente establecido
 missing <- missing_prices()
 
 imputables <- missing$cann_imput
@@ -144,6 +154,7 @@ export_index() #Se exportan los resultados a un archivo de excel
 Se recolectan los indices generales para poder verlos en un grafico
 
 ```{r}
+#se obtienen los nombres de las hojas para leer los archivos e importar los datos necesarios y generar un dataframe con los mismos
 sheet_names <- paste0(months)
 ipp <- readind(months, sheet_names)
 
@@ -155,22 +166,26 @@ resipp
 ```
 
 ```{r}
+#se grafican los datos del indice general
 grafica(resipp, 'Mes', 'indice')
 ```
 
 ### 1.5 Calculo de Incidencias
 
 ```{r}
-indgen_ant <- as.data.frame(readind(mesant, mesant))
+#se realiza el calculo de incidencias a los indices de los productos utilizando la funcion "incidencias"
+indgen_ant <- as.data.frame(readind(mesant, mesant)) #se importan los indices del mes anterior
 
 incid <- incidencias(ind_prod01)
 ```
 
 ```{r}
+#se obtienen as indicencias positivas
 incid %>% filter(incid < 0)
 ```
 
 ```{r}
+#se obtienen las incidencias negativas
 incid %>% filter(incid > 0)
 ```
 
@@ -186,10 +201,12 @@ ind$indice/indgen_ant$indice*100-100
 ### 1.6 Outliers
 
 ```{r}
+#se obtienen los datos estadisticos del grupo de datos de los relativos de las variedades
 summary(relativo_var$rel_var)
 ```
 
 ```{r}
+#se realiza un histograma y una box-plot para observar el comportamiento de los datos
 hist(relativo_var$rel_var,
   xlab = "relativo",
   main = "Histograma de relativo",
@@ -202,6 +219,7 @@ boxplot(relativo_var$rel_var,
 ```
 
 ```{r}
+#ya que los cuartiles 1 y 3 tienen el mismo valor, no se puede realizar correctamente un analisis de quartiles, por lo que se opto por realizar un analisis con los percentiles, para este caso de tomaron limites del 1% y 99%
 lim_inf <- quantile(relativo_var$rel_var, 0.01)
 lim_sup <- quantile(relativo_var$rel_var, 0.99)
 
@@ -210,9 +228,12 @@ lim_sup
 ```
 
 ```{r}
+#se buscan los outliers basado en el criterio anterior
 outlier_ind <- which(relativo_var$rel_var < lim_inf | relativo_var$rel_var > lim_sup)
 
-relativo_var[outlier_ind, ]
+#se genera un dataframe con la informacion de los outliers
+outliers <- relativo_var[outlier_ind, ]
+outliers
 ```
 
 ## 2. Revision de productos faltantes
@@ -220,19 +241,28 @@ relativo_var[outlier_ind, ]
 Se obtienen los articulos de los que no se obtuvo informacion cada mes
 
 ```{r}
+#se importan los datos imputados y no imputados para cada mes con la función "count_imput", dicha funcion asigna el valor 1 si No hubo precio en ese mes y valor 0 si en el mes si se reporto precio
 resultados <- count_imput()
 
+#se guardan los resultados en dos datafrmaes, separando los datos faltantes en imputados y los no imputados
 count_imputables <- resultados$imputados
 count_noimputables <- resultados$noimputados
 ```
 
 ```{r}
-#con esto se revisan las variedades que no han presentado precios en tres o mas meses 
+#se revisan las variedades que no han presentado precios en tres o mas meses de las variedades que pueden imputarse
 count_imputables %>% filter(total >= 3)
 #test
 ```
 
 ```{r}
+#se revisan las variedades que no han presentado precios en tres o mas meses de las variedades que no pueden imputarse
+count_noimputables %>% filter(total >= 3)
+#test1
+```
+
+```{r}
+#se agregan las descripciones de las variedades a los resultados obtenidos anteriormente
 pond_variedad <- ponderaciones %>% filter(CCP...1 == 'VARIEDAD') %>% 
   select(PRODUCTO, DESCRIPCION) %>% 
   rename('VARIEDAD' = PRODUCTO)
@@ -243,21 +273,7 @@ count_noimputables1 <- count_noimputables %>% left_join(pond_variedad) %>%
 ```
 
 ```{r}
-count_noimputables %>% filter(total >= 3)
-#test1
-```
-
-```{r}
-# ggplot(test, aes(x = VARIEDAD, y = total)) +
-#   geom_bar(stat = "identity", fill = "skyblue") +
-#   labs(title = "",
-#        x = "Codigo variedad",
-#        y = "Cantidad") +
-#   theme_minimal()+
-#   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
-```
-
-```{r}
+#se guardan los resultados en un archivo de excel
 wb <- createWorkbook()
  
 addWorksheet(wb, "imputables")
@@ -273,6 +289,7 @@ saveWorkbook(wb, file_name, overwrite = TRUE)
 Revisamos los productos que no aparecen
 
 ```{r}
+#se obtienen los productos que no aparecen en el mes de calculo, esto debido a falta de precios en las variedades que los conforman
 ponderaciones %>% filter(CCP...1 == 'PRODUCTO') %>% anti_join(ind_prod01) %>% 
   select(CCP...1, PRODUCTO, DESCRIPCION, ponderacion) #%>% 
   #summarize(total = sum(ponderacion))
