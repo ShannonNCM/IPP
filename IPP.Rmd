@@ -26,8 +26,8 @@ library('stringi')
 library('rlang')
 library('ggplot2')
 
-#source("func_test.R") #este archivo tiene el borrador de las funciones que se utilizan en el script
 source("funciones.R")
+#source("func_test.R") #este archivo tiene el borrador de las funciones que se utilizan en el script
 ```
 
 ## 1. Calculo del IPP
