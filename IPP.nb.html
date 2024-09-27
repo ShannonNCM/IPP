@@ -2230,9 +2230,8 @@ valor 1 si el precio NO se registro en ese mes y el valor 0 si en ese
 mes SI se registro precio.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI3NlIGltcG9ydGFuIGxvcyBkYXRvcyBpbXB1dGFkb3MgeSBubyBpbXB1dGFkb3MgcGFyYSBjYWRhIG1lcyBjb24gbGEgZnVuY2nDs24gXCJjb3VudF9pbXB1dFwiLCBkaWNoYSBmdW5jaW9uIGFzaWduYSBlbCB2YWxvciAxIHNpIE5vIGh1Ym8gcHJlY2lvIGVuIGVzZSBtZXMgeSB2YWxvciAwIHNpIGVuIGVsIG1lcyBzaSBzZSByZXBvcnRvIHByZWNpb1xucmVzdWx0YWRvcyA8LSBjb3VudF9pbXB1dCgpXG5cbiNzZSBndWFyZGFuIGxvcyByZXN1bHRhZG9zIGVuIGRvcyBkYXRhZnJtYWVzLCBzZXBhcmFuZG8gbG9zIGRhdG9zIGZhbHRhbnRlcyBlbiBpbXB1dGFkb3MgeSBsb3Mgbm8gaW1wdXRhZG9zXG5jb3VudF9pbXB1dGFibGVzIDwtIHJlc3VsdGFkb3MkaW1wdXRhZG9zXG5jb3VudF9ub2ltcHV0YWJsZXMgPC0gcmVzdWx0YWRvcyRub2ltcHV0YWRvc1xuYGBgIn0= -->
-<pre class="r"><code>#se importan los datos imputados y no imputados para cada mes con la función &quot;count_imput&quot;, dicha funcion asigna el valor 1 si No hubo precio en ese mes y valor 0 si en el mes si se reporto precio
-resultados &lt;- count_imput()
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVzdWx0YWRvcyA8LSBjb3VudF9pbXB1dCgpXG5cbiNzZSBndWFyZGFuIGxvcyByZXN1bHRhZG9zIGVuIGRvcyBkYXRhZnJtYWVzLCBzZXBhcmFuZG8gbG9zIGRhdG9zIGZhbHRhbnRlcyBlbiBpbXB1dGFkb3MgeSBsb3Mgbm8gaW1wdXRhZG9zXG5jb3VudF9pbXB1dGFibGVzIDwtIHJlc3VsdGFkb3MkaW1wdXRhZG9zXG5jb3VudF9ub2ltcHV0YWJsZXMgPC0gcmVzdWx0YWRvcyRub2ltcHV0YWRvc1xuYGBgIn0= -->
+<pre class="r"><code>resultados &lt;- count_imput()
 
 #se guardan los resultados en dos datafrmaes, separando los datos faltantes en imputados y los no imputados
 count_imputables &lt;- resultados$imputados
@@ -2244,9 +2243,8 @@ count_noimputables &lt;- resultados$noimputados</code></pre>
 meses de las variedades que si pueden imputarse</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI3NlIHJldmlzYW4gbGFzIHZhcmllZGFkZXMgcXVlIG5vIGhhbiBwcmVzZW50YWRvIHByZWNpb3MgZW4gdHJlcyBvIG1hcyBtZXNlcyBkZSBsYXMgdmFyaWVkYWRlcyBxdWUgcHVlZGVuIGltcHV0YXJzZVxuY291bnRfaW1wdXRhYmxlcyAlPiUgZmlsdGVyKHRvdGFsID49IDMpXG5gYGAifQ== -->
-<pre class="r"><code>#se revisan las variedades que no han presentado precios en tres o mas meses de las variedades que pueden imputarse
-count_imputables %&gt;% filter(total &gt;= 3)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY291bnRfaW1wdXRhYmxlcyAlPiUgZmlsdGVyKHRvdGFsID49IDMpXG5gYGAifQ== -->
+<pre class="r"><code>count_imputables %&gt;% filter(total &gt;= 3)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6MjUsIm5jb2wiOjUsInN1bW1hcnkiOnsiQSB0aWJibGUiOlsiMjUgw5cgNSJdfX0sInJkZiI6Ikg0c0lBQUFBQUFBQUJ1MlUzMDZETUJUR2oyeTRQOG1XSlY3dElVYmFBbU5jNlhRczhVSk5pSnJGTzl4UUZ4RU1ZOUZMMzlaYm4yQjRTbUZBbjhBbGtuVHQrYlduNS92T2tycXpoZDVkZEFHZ0FVMUZnWWFLUzFEdmJ1ZWpDU0RCNEFpYTBPSHpKeDQ2NGJzNEJqaUcrVWJuZ2hLTFVrYk1DaGhUU2drckFTVjF3QmhEUW5RWkdHV0tSV3llSmdNbWc4b2RlQU9qeEs3bzBBazF5TGdFQmhkQ3JLb3dvMTVGQUwxK0J5V1RDakFKdXFVMXQzcE5HTEc0TUZzR1pZUHdPTDkwTEFNcXBkQVNNTjAyWmJlczNsTUJLaW1tTFJvRTBPZC8yT2tQWk4raHovRHY1MC9Qa1BzNWE0dmcwR2ZwSlZSRDc4M2ZnSGdGMVJ5Mjc2ZnVwVE9iem9wRHpyWGozdVJCYSs2Y3UyV29YazNkaDMyUVJJa1hTQ1U2Y2ZTaEZXVjZPSlF2L0VuVDlGdldzZ3k4VGFHbGdOMlZsM2phVTR6NUdPMmtsRmIwbnF5akVKT1U2bk8rZitkakNReTJJVmV5R2kxZnR1SHJpRm04UXJZdnZsNitIbGJXcXFpcHBGS1hqdjN3ZVIzNmhmakFlL1NEUE9pajVjeXg5aDZ2dzZTd2duU2ppUmJsWkJrRkJjbk13ZTRYVy90Zk5zWUdBQUE9In0= -->
 <div data-pagedtable="false">
@@ -2264,9 +2262,8 @@ count_imputables %&gt;% filter(total &gt;= 3)</code></pre>
 meses de las variedades que no pueden imputarse</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI3NlIHJldmlzYW4gbGFzIHZhcmllZGFkZXMgcXVlIG5vIGhhbiBwcmVzZW50YWRvIHByZWNpb3MgZW4gdHJlcyBvIG1hcyBtZXNlcyBkZSBsYXMgdmFyaWVkYWRlcyBxdWUgbm8gcHVlZGVuIGltcHV0YXJzZVxuY291bnRfbm9pbXB1dGFibGVzICU+JSBmaWx0ZXIodG90YWwgPj0gMylcbmBgYCJ9 -->
-<pre class="r"><code>#se revisan las variedades que no han presentado precios en tres o mas meses de las variedades que no pueden imputarse
-count_noimputables %&gt;% filter(total &gt;= 3)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY291bnRfbm9pbXB1dGFibGVzICU+JSBmaWx0ZXIodG90YWwgPj0gMylcbmBgYCJ9 -->
+<pre class="r"><code>count_noimputables %&gt;% filter(total &gt;= 3)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6MTMsIm5jb2wiOjUsInN1bW1hcnkiOnsiQSB0aWJibGUiOlsiMTMgw5cgNSJdfX0sInJkZiI6Ikg0c0lBQUFBQUFBQUJ1VlRUVStEUUJEZDBtSUxDVTBUZndka2QybTFuQlNGSmg3VWhLaHB2Q0ZGSmVMU0FJMGUvY2ttM292RHh5THN2U2MzbVoxOWIrWmxaamE3bnJNMjFiV0tFQnFpa1NTaG9ReEhKTi9mcmZRbEFnYkFBSTJRVXZwUFNEb3VvMkF6TUswSktKZUVZQk9NdElSSkY3aEhFRXd4b1IyQ0xnanRaVkNMQ2hLQzV6MEp3U2VnNlJLbVpmVWxwNWoycTVqV3ZKTXh3QjB0SVgxdFRWQUEwM0s0czI5VXJVUDcvMUx2ZkZLRFEzdmgxY3JNZnc4elZMOVl1U0VuRDdaMzVUcTJ3NVBjRzllN2JjQjQ1VjU0ZjFDK3RyM0hGdVJKN3NkQ0NTVk5QZ3hlUmdPVHZtQXJpdUpIN0NXSS9ZejN3a2wxNCtlKzhaeUNIdEJla0l5VGJSNGxERVJTOSt1MWZ6SVZpTm1PbFoxczlPQjF4OTUwdWl3clZQRjZhYzFaNjV6bHVxWlVDTGQwRkxLWGlJVzgrZGgvQ3VNR1RHSGthbUpqbTBZczU2TUFteG4xRlRWTWtNU2NxWVpEKzE4eFpQWmxjZ1FBQUE9PSJ9 -->
 <div data-pagedtable="false">
@@ -2284,8 +2281,8 @@ count_noimputables %&gt;% filter(total &gt;= 3)</code></pre>
 obtenidos</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI3NlIGFncmVnYW4gbGFzIGRlc2NyaXBjaW9uZXMgZGUgbGFzIHZhcmllZGFkZXMgYSBsb3MgcmVzdWx0YWRvcyBvYnRlbmlkb3MgYW50ZXJpb3JtZW50ZVxucG9uZF92YXJpZWRhZCA8LSBwb25kZXJhY2lvbmVzICU+JSBmaWx0ZXIoQ0NQLi4uMSA9PSAnVkFSSUVEQUQnKSAlPiUgXG4gIHNlbGVjdChQUk9EVUNUTywgREVTQ1JJUENJT04pICU+JSBcbiAgcmVuYW1lKCdWQVJJRURBRCcgPSBQUk9EVUNUTylcbmNvdW50X2ltcHV0YWJsZXMxIDwtIGNvdW50X2ltcHV0YWJsZXMgJT4lIGxlZnRfam9pbihwb25kX3ZhcmllZGFkKSAlPiUgXG4gIHNlbGVjdChWQVJJRURBRCwgREVTQ1JJUENJT04sIGV2ZXJ5dGhpbmcoKSlcbmBgYCJ9 -->
-<pre class="r"><code>#se agregan las descripciones de las variedades a los resultados obtenidos anteriormente
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5wb25kX3ZhcmllZGFkIDwtIHBvbmRlcmFjaW9uZXMgJT4lIGZpbHRlcihDQ1AuLi4xID09ICdWQVJJRURBRCcpICU+JSBcbiAgc2VsZWN0KFBST0RVQ1RPLCBERVNDUklQQ0lPTikgJT4lIFxuICByZW5hbWUoJ1ZBUklFREFEJyA9IFBST0RVQ1RPKVxuY291bnRfaW1wdXRhYmxlczEgPC0gY291bnRfaW1wdXRhYmxlcyAlPiUgbGVmdF9qb2luKHBvbmRfdmFyaWVkYWQpICU+JSBcbiAgc2VsZWN0KFZBUklFREFELCBERVNDUklQQ0lPTiwgZXZlcnl0aGluZygpKVxuYGBgIn0= -->
+<pre class="r"><code>
 pond_variedad &lt;- ponderaciones %&gt;% filter(CCP...1 == &#39;VARIEDAD&#39;) %&gt;% 
   select(PRODUCTO, DESCRIPCION) %&gt;% 
   rename(&#39;VARIEDAD&#39; = PRODUCTO)
@@ -2307,9 +2304,8 @@ count_imputables1 &lt;- count_imputables %&gt;% left_join(pond_variedad) %&gt;%
 <p>Guatda los resultados en un archivo de excel</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI3NlIGd1YXJkYW4gbG9zIHJlc3VsdGFkb3MgZW4gdW4gYXJjaGl2byBkZSBleGNlbFxud2IgPC0gY3JlYXRlV29ya2Jvb2soKVxuIFxuYWRkV29ya3NoZWV0KHdiLCBcImltcHV0YWJsZXNcIilcbndyaXRlRGF0YSh3YiwgXCJpbXB1dGFibGVzXCIsIGNvdW50X2ltcHV0YWJsZXMxKVxuXG5hZGRXb3Jrc2hlZXQod2IsIFwibm9faW1wdXRhYmxlc1wiKVxud3JpdGVEYXRhKHdiLCBcIm5vX2ltcHV0YWJsZXNcIiwgY291bnRfbm9pbXB1dGFibGVzMSlcbiBcbmZpbGVfbmFtZSA8LSBwYXN0ZTAoXCJyZXN1bWVuX3ByZWNpb3NmYWx0YW50ZXMueGxzeFwiKVxuc2F2ZVdvcmtib29rKHdiLCBmaWxlX25hbWUsIG92ZXJ3cml0ZSA9IFRSVUUpXG5gYGAifQ== -->
-<pre class="r"><code>#se guardan los resultados en un archivo de excel
-wb &lt;- createWorkbook()
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxud2IgPC0gY3JlYXRlV29ya2Jvb2soKVxuIFxuYWRkV29ya3NoZWV0KHdiLCBcImltcHV0YWJsZXNcIilcbndyaXRlRGF0YSh3YiwgXCJpbXB1dGFibGVzXCIsIGNvdW50X2ltcHV0YWJsZXMxKVxuXG5hZGRXb3Jrc2hlZXQod2IsIFwibm9faW1wdXRhYmxlc1wiKVxud3JpdGVEYXRhKHdiLCBcIm5vX2ltcHV0YWJsZXNcIiwgY291bnRfbm9pbXB1dGFibGVzMSlcbiBcbmZpbGVfbmFtZSA8LSBwYXN0ZTAoXCJyZXN1bWVuX3ByZWNpb3NmYWx0YW50ZXMueGxzeFwiKVxuc2F2ZVdvcmtib29rKHdiLCBmaWxlX25hbWUsIG92ZXJ3cml0ZSA9IFRSVUUpXG5gYGAifQ== -->
+<pre class="r"><code>wb &lt;- createWorkbook()
  
 addWorksheet(wb, &quot;imputables&quot;)
 writeData(wb, &quot;imputables&quot;, count_imputables1)
