@@ -35,7 +35,7 @@ source("funciones.R")
 Ingresa el numero correspondiente al mes que se va a calcular (por el momento no se toma en cuenta el año ya que se esta empezando con el año 2024)
 
 ```{r}
-mes <- 1
+mes <- 3
 ```
 
 ```{r}
@@ -255,7 +255,7 @@ outliers <- which(relativo_var$rel_var < quantile(relativo_var$rel_var, 0.005) |
 relativo_var[outliers, ]
 ```
 
-En este caso se obtienen 20 valores que se encuentra por debajo del 0.5% o por arriba del 99.5%.
+En este caso se obtienen 20 valores que se encuentra por debajo del 0.5% o por arriba del 99.5%, tanto para enero como febrero y marzo
 
 #### 1.6.4 Histograma y box-plot
 
@@ -276,14 +276,15 @@ outliers_box <- which(relativo_var$rel_var %in% boxplot.stats(relativo_var$rel_v
 relativo_var[outliers_box, ]
 ```
 
-En estee caso, a partir de la box-plot se encuentran 214 valores que serian outliers.
+En estee caso, a partir de la box-plot se encuentran 214 valores que serian outliers (para enero).
+
+En el caso de Febrero son 361 outliers, y marzo son 383 outliers
 
 ## 2. Revision de productos faltantes
 
-Se obtienen los articulos de los que no se obtuvo informacion cada mes
+Se obtienen los articulos de los que no se obtuvo informacion cada mes, para ello se importann los datos faltantes imputados y no imputados para cada mes con la función 'count_imput', dicha función asigna el valor 1 si el precio NO se registro en ese mes y el valor 0 si en ese mes SI se registro precio.
 
 ```{r}
-#se importan los datos imputados y no imputados para cada mes con la función "count_imput", dicha funcion asigna el valor 1 si No hubo precio en ese mes y valor 0 si en el mes si se reporto precio
 resultados <- count_imput()
 
 #se guardan los resultados en dos datafrmaes, separando los datos faltantes en imputados y los no imputados
@@ -291,20 +292,24 @@ count_imputables <- resultados$imputados
 count_noimputables <- resultados$noimputados
 ```
 
+Revisa las variedades que no han presentado precios en tres o mas meses de las variedades que si pueden imputarse
+
 ```{r}
-#se revisan las variedades que no han presentado precios en tres o mas meses de las variedades que pueden imputarse
 count_imputables %>% filter(total >= 3)
 #test
 ```
 
+Revisa las variedades que no han presentado precios en tres o mas meses de las variedades que no pueden imputarse
+
 ```{r}
-#se revisan las variedades que no han presentado precios en tres o mas meses de las variedades que no pueden imputarse
 count_noimputables %>% filter(total >= 3)
 #test1
 ```
 
+Agrega las descripciones de las variedades a los resultados obtenidos
+
 ```{r}
-#se agregan las descripciones de las variedades a los resultados obtenidos anteriormente
+
 pond_variedad <- ponderaciones %>% filter(CCP...1 == 'VARIEDAD') %>% 
   select(PRODUCTO, DESCRIPCION) %>% 
   rename('VARIEDAD' = PRODUCTO)
@@ -314,8 +319,9 @@ count_noimputables1 <- count_noimputables %>% left_join(pond_variedad) %>%
   select(VARIEDAD, DESCRIPCION, everything())
 ```
 
+Guatda los resultados en un archivo de excel
+
 ```{r}
-#se guardan los resultados en un archivo de excel
 wb <- createWorkbook()
  
 addWorksheet(wb, "imputables")
